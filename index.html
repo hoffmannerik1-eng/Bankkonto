@@ -1,0 +1,474 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bankkonto</title>
+<style>
+:root {
+  --red:#e30613;
+  --dark:#252525;
+  --green:#16834a;
+  --gray:#f3f4f5;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--gray);
+  color:var(--dark);
+  font-family:Arial,sans-serif;
+}
+header{
+  background:white;
+  border-bottom:1px solid #ddd;
+  padding:18px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:23px;
+  font-weight:bold;
+}
+.logo{
+  background:var(--red);
+  color:white;
+  border-radius:9px;
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+}
+.plus{
+  background:var(--red);
+  color:white;
+  border:0;
+  border-radius:50%;
+  width:48px;
+  height:48px;
+  font-size:30px;
+  cursor:pointer;
+}
+main{
+  max-width:1050px;
+  margin:35px auto;
+  padding:0 18px;
+}
+h1{font-size:27px}
+.grid{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:18px;
+}
+.card{
+  background:white;
+  border:1px solid #e5e5e5;
+  border-radius:9px;
+  padding:25px;
+  box-shadow:0 2px 8px #00000008;
+}
+.balance{
+  background:white;
+  min-height:190px;
+}
+.label{color:#777;font-size:14px}
+.amount{
+  font-size:clamp(40px,7vw,65px);
+  color:var(--red);
+  font-weight:bold;
+  margin:15px 0;
+  letter-spacing:-2px;
+}
+.quick button{
+  display:block;
+  width:100%;
+  padding:15px 0;
+  text-align:left;
+  border:0;
+  border-bottom:1px solid #eee;
+  background:white;
+  cursor:pointer;
+  font-size:14px;
+}
+.transactions{margin-top:20px}
+.entry{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  border-top:1px solid #eee;
+  padding:17px 0;
+}
+.entry small{display:block;color:#888;margin-top:5px}
+.green{color:var(--green);font-weight:bold}
+.red{color:var(--red);font-weight:bold}
+.delete{
+  border:0;background:white;color:#999;
+  cursor:pointer;font-size:18px;
+}
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0008;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+.dialog{
+  background:white;
+  padding:25px;
+  border-radius:10px;
+  width:min(420px,100%);
+}
+input,select{
+  width:100%;
+  padding:12px;
+  margin:7px 0 14px;
+  border:1px solid #ccc;
+  border-radius:5px;
+  font-size:15px;
+}
+label{font-size:13px;font-weight:bold}
+.btn{
+  background:var(--red);
+  color:white;
+  border:0;
+  padding:13px;
+  border-radius:5px;
+  cursor:pointer;
+}
+.dialog button{width:100%;margin-top:8px}
+.cancel{background:#eee;color:#222}
+#lock{
+  position:fixed;
+  inset:0;
+  z-index:10;
+  background:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+#lock .dialog{box-shadow:0 5px 30px #0002}
+.hidden{display:none!important}
+@media(max-width:700px){
+  .grid{grid-template-columns:1fr}
+  main{margin-top:20px}
+  .card{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <div class="dialog">
+    <div class="brand"><div class="logo">B</div>Bankkonto</div>
+    <h2 id="lockTitle">Willkommen</h2>
+    <p id="lockMessage">Lege dein Passwort fest.</p>
+    <input id="password" type="password" placeholder="Passwort">
+    <button class="btn" id="unlock">Weiter</button>
+    <p style="font-size:12px;color:#888">
+      Deine Kontodaten werden verschlüsselt auf diesem Gerät gespeichert.
+      Verwende ein sicheres Passwort.
+    </p>
+  </div>
+</div>
+
+<header>
+  <div class="brand">
+    <div class="logo">B</div>
+    <div>Bankkonto</div>
+  </div>
+  <button class="plus" id="add">+</button>
+</header>
+
+<main>
+  <h1>Guten Tag!</h1>
+  <p style="color:#777">Deine persönliche Finanzübersicht</p>
+
+  <div class="grid">
+    <div class="card balance">
+      <div class="label">Aktueller Kontostand</div>
+      <div class="amount" id="balance">0,00 €</div>
+      <div class="label">Verfügbares Guthaben</div>
+    </div>
+
+    <div class="card quick">
+      <h3>Schnellzugriff</h3>
+      <button id="income">＋ Geld einzahlen</button>
+      <button id="expense">− Geld ausgeben</button>
+      <button id="monthly">↻ Monatliches Taschengeld</button>
+    </div>
+  </div>
+
+  <div class="card transactions">
+    <h3>Deine Buchungen</h3>
+    <div id="entries"></div>
+  </div>
+</main>
+
+<div class="modal" id="modal">
+  <div class="dialog">
+    <h2 id="modalTitle">Neue Buchung</h2>
+    <div id="form"></div>
+    <button class="btn" id="save">Speichern</button>
+    <button class="btn cancel" id="cancel">Abbrechen</button>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const DATA="bankkonto_secure_data";
+const RULES="bankkonto_rules";
+let account={entries:[]};
+let rules=[];
+let cryptoKey=null;
+let mode="income";
+
+const money=n=>new Intl.NumberFormat("de-DE",{
+  style:"currency",currency:"EUR"
+}).format(n);
+
+async function derive(password,salt){
+  const base=await crypto.subtle.importKey(
+    "raw",new TextEncoder().encode(password),
+    "PBKDF2",false,["deriveKey"]
+  );
+  return crypto.subtle.deriveKey({
+    name:"PBKDF2",salt,iterations:310000,hash:"SHA-256"
+  },base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+}
+
+async function encrypt(data){
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const result=await crypto.subtle.encrypt(
+    {name:"AES-GCM",iv},cryptoKey,
+    new TextEncoder().encode(JSON.stringify(data))
+  );
+  return {iv:[...iv],data:[...new Uint8Array(result)]};
+}
+
+async function decrypt(obj){
+  const result=await crypto.subtle.decrypt(
+    {name:"AES-GCM",iv:new Uint8Array(obj.iv)},
+    cryptoKey,new Uint8Array(obj.data)
+  );
+  return JSON.parse(new TextDecoder().decode(result));
+}
+
+async function save(){
+  localStorage.setItem(DATA,JSON.stringify(await encrypt(account)));
+  localStorage.setItem(RULES,JSON.stringify(rules));
+}
+
+async function unlock(){
+  const password=$("password").value;
+  if(!password)return;
+
+  try{
+    const stored=localStorage.getItem(DATA);
+
+    if(!stored){
+      if(password.length<10){
+        $("lockMessage").textContent=
+          "Bitte mindestens 10 Zeichen verwenden.";
+        return;
+      }
+      const salt=crypto.getRandomValues(new Uint8Array(16));
+      cryptoKey=await derive(password,salt);
+      account={entries:[]};
+      localStorage.setItem(DATA,JSON.stringify({
+        salt:[...salt],...(await encrypt(account))
+      }));
+    }else{
+      const obj=JSON.parse(stored);
+      cryptoKey=await derive(password,new Uint8Array(obj.salt));
+      account=await decrypt(obj);
+    }
+
+    rules=JSON.parse(localStorage.getItem(RULES)||"[]");
+    $("lock").classList.add("hidden");
+    applyRules();
+    render();
+  }catch(e){
+    cryptoKey=null;
+    $("lockMessage").textContent=
+      "Passwort falsch oder Daten beschädigt.";
+  }
+}
+
+$("unlock").onclick=unlock;
+$("password").onkeydown=e=>{
+  if(e.key==="Enter")unlock();
+};
+
+function month(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+}
+
+function nextMonth(m){
+  let [y,n]=m.split("-").map(Number);
+  n++;
+  if(n>12){n=1;y++}
+  return y+"-"+String(n).padStart(2,"0");
+}
+
+function applyRules(){
+  let changed=false;
+  for(const r of rules){
+    let m=r.lastApplied?nextMonth(r.lastApplied):r.start;
+    while(m<=month()){
+      account.entries.push({
+        id:crypto.randomUUID(),
+        amount:r.amount,
+        name:r.name,
+        date:m+"-01",
+        auto:true
+      });
+      r.lastApplied=m;
+      changed=true;
+      m=nextMonth(m);
+    }
+  }
+  if(changed)save();
+}
+
+function render(){
+  const total=account.entries.reduce((a,e)=>a+e.amount,0);
+  $("balance").textContent=money(total);
+  const list=$("entries");
+  list.innerHTML="";
+
+  const sorted=[...account.entries].sort(
+    (a,b)=>b.date.localeCompare(a.date)
+  );
+
+  if(!sorted.length){
+    list.textContent="Noch keine Buchungen vorhanden.";
+    return;
+  }
+
+  for(const e of sorted){
+    const row=document.createElement("div");
+    row.className="entry";
+
+    const left=document.createElement("div");
+    const name=document.createElement("strong");
+    name.textContent=e.name+(e.auto?" · monatlich":"");
+    const date=document.createElement("small");
+    date.textContent=new Date(e.date+"T12:00:00").toLocaleDateString("de-DE");
+    left.append(name,date);
+
+    const right=document.createElement("div");
+    right.style.display="flex";
+    right.style.alignItems="center";
+    const amount=document.createElement("span");
+    amount.className=e.amount>=0?"green":"red";
+    amount.textContent=(e.amount>=0?"+":"−")+money(Math.abs(e.amount));
+
+    const del=document.createElement("button");
+    del.className="delete";
+    del.textContent="×";
+    del.onclick=async()=>{
+      if(confirm("Buchung löschen?")){
+        account.entries=account.entries.filter(x=>x.id!==e.id);
+        await save();
+        render();
+      }
+    };
+
+    right.append(amount,del);
+    row.append(left,right);
+    list.append(row);
+  }
+}
+
+function open(title,html,m){
+  mode=m;
+  $("modalTitle").textContent=title;
+  $("form").innerHTML=html;
+  $("modal").style.display="flex";
+}
+
+function close(){$("modal").style.display="none"}
+
+$("add").onclick=()=>showEntry("income");
+$("income").onclick=()=>showEntry("income");
+$("expense").onclick=()=>showEntry("expense");
+
+function showEntry(type){
+  open("Neue Buchung",`
+    <label>Art</label>
+    <select id="type">
+      <option value="income">Einnahme</option>
+      <option value="expense">Ausgabe</option>
+    </select>
+    <label>Betrag in Euro</label>
+    <input id="amount" type="number" min=".01" step=".01" placeholder="20,00">
+    <label>Beschreibung</label>
+    <input id="name" maxlength="80" placeholder="z. B. Taschengeld">
+    <label>Datum</label>
+    <input id="date" type="date" value="${new Date().toISOString().slice(0,10)}">
+  `,"entry");
+  $("type").value=type;
+}
+
+$("monthly").onclick=()=>{
+  open("Monatliches Taschengeld",`
+    <label>Betrag pro Monat (€)</label>
+    <input id="amount" type="number" min=".01" step=".01" placeholder="20,00">
+    <label>Beschreibung</label>
+    <input id="name" placeholder="Taschengeld">
+    <label>Art</label>
+    <select id="type">
+      <option value="income">Geld bekommen</option>
+      <option value="expense">Geld abziehen</option>
+    </select>
+    <label>Startmonat</label>
+    <input id="start" type="month" value="${month()}">
+  `,"monthly");
+};
+
+$("save").onclick=async()=>{
+  const amount=Number($("amount").value);
+  const name=$("name").value.trim();
+
+  if(!Number.isFinite(amount)||amount<=0||!name){
+    alert("Bitte Betrag und Beschreibung eingeben.");
+    return;
+  }
+
+  if(mode==="entry"){
+    const date=$("date").value;
+    if(!date){alert("Bitte Datum auswählen.");return}
+    account.entries.push({
+      id:crypto.randomUUID(),
+      amount:$("type").value==="income"?amount:-amount,
+      name,date
+    });
+  }else{
+    const start=$("start").value;
+    if(!start){alert("Bitte Startmonat wählen.");return}
+    rules.push({
+      id:crypto.randomUUID(),
+      amount:$("type").value==="income"?amount:-amount,
+      name,start,lastApplied:null
+    });
+  }
+
+  await save();
+  applyRules();
+  render();
+  close();
+};
+
+$("cancel").onclick=close;
+</script>
+</body>
+</html>
