@@ -3,472 +3,320 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bankkonto</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bankkonto – Finanzüberblick</title>
 <style>
-:root {
-  --red:#e30613;
-  --dark:#252525;
-  --green:#16834a;
-  --gray:#f3f4f5;
-}
+:root{--red:#df0712;--dark:#b9000b;--bg:#f4f5f7;--text:#20242b;--muted:#818791;--green:#159b62;--border:#e9eaee}
 *{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--gray);
-  color:var(--dark);
-  font-family:Arial,sans-serif;
-}
-header{
-  background:white;
-  border-bottom:1px solid #ddd;
-  padding:18px 5%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  font-size:23px;
-  font-weight:bold;
-}
-.logo{
-  background:var(--red);
-  color:white;
-  border-radius:9px;
-  width:40px;
-  height:40px;
-  display:grid;
-  place-items:center;
-}
-.plus{
-  background:var(--red);
-  color:white;
-  border:0;
-  border-radius:50%;
-  width:48px;
-  height:48px;
-  font-size:30px;
-  cursor:pointer;
-}
-main{
-  max-width:1050px;
-  margin:35px auto;
-  padding:0 18px;
-}
-h1{font-size:27px}
-.grid{
-  display:grid;
-  grid-template-columns:1.5fr 1fr;
-  gap:18px;
-}
-.card{
-  background:white;
-  border:1px solid #e5e5e5;
-  border-radius:9px;
-  padding:25px;
-  box-shadow:0 2px 8px #00000008;
-}
-.balance{
-  background:white;
-  min-height:190px;
-}
-.label{color:#777;font-size:14px}
-.amount{
-  font-size:clamp(40px,7vw,65px);
-  color:var(--red);
-  font-weight:bold;
-  margin:15px 0;
-  letter-spacing:-2px;
-}
-.quick button{
-  display:block;
-  width:100%;
-  padding:15px 0;
-  text-align:left;
-  border:0;
-  border-bottom:1px solid #eee;
-  background:white;
-  cursor:pointer;
-  font-size:14px;
-}
-.transactions{margin-top:20px}
-.entry{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  border-top:1px solid #eee;
-  padding:17px 0;
-}
-.entry small{display:block;color:#888;margin-top:5px}
-.green{color:var(--green);font-weight:bold}
-.red{color:var(--red);font-weight:bold}
-.delete{
-  border:0;background:white;color:#999;
-  cursor:pointer;font-size:18px;
-}
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#0008;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-}
-.dialog{
-  background:white;
-  padding:25px;
-  border-radius:10px;
-  width:min(420px,100%);
-}
-input,select{
-  width:100%;
-  padding:12px;
-  margin:7px 0 14px;
-  border:1px solid #ccc;
-  border-radius:5px;
-  font-size:15px;
-}
-label{font-size:13px;font-weight:bold}
-.btn{
-  background:var(--red);
-  color:white;
-  border:0;
-  padding:13px;
-  border-radius:5px;
-  cursor:pointer;
-}
-.dialog button{width:100%;margin-top:8px}
-.cancel{background:#eee;color:#222}
-#lock{
-  position:fixed;
-  inset:0;
-  z-index:10;
-  background:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-}
-#lock .dialog{box-shadow:0 5px 30px #0002}
+body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--text)}
+button,input,select{font:inherit}button{cursor:pointer}
+header{height:74px;background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 5%;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:12px;font-size:21px;font-weight:800}
+.logo{width:42px;height:42px;background:var(--red);color:white;border-radius:12px;display:grid;place-items:center;font-size:24px}
+.avatar{width:39px;height:39px;border-radius:50%;background:#ffe7e8;color:var(--red);display:grid;place-items:center;font-weight:800}
+main{max-width:1240px;margin:34px auto;padding:0 24px}
+.topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+h1{font-size:27px;margin:0 0 6px}
+.subtitle{font-size:14px;color:var(--muted)}
+.primary{background:var(--red);color:white;border:0;border-radius:11px;padding:13px 18px;font-weight:700}
+.primary:hover{background:var(--dark)}
+.balance-panel{background:linear-gradient(115deg,#d90010,#f02b35);border-radius:20px;padding:30px 32px;color:white;display:flex;align-items:center;justify-content:space-between;box-shadow:0 12px 30px #d9001025;position:relative;overflow:hidden}
+.balance-panel:after{content:"€";position:absolute;right:28%;top:-75px;font-size:260px;font-weight:900;color:#ffffff0d}
+.balance-left,.balance-right{position:relative;z-index:1}
+.eyebrow{font-size:13px;opacity:.85;margin-bottom:12px}
+.balance{font-size:43px;font-weight:800;letter-spacing:-1px}
+.balance-note{font-size:12px;opacity:.8;margin-top:9px}
+.balance-actions{display:flex;gap:10px}
+.light-btn{border:1px solid #ffffff70;background:#ffffff18;color:white;padding:12px 17px;border-radius:10px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:17px;margin:21px 0}
+.stat,.panel{background:white;border:1px solid var(--border);border-radius:16px;padding:21px;box-shadow:0 8px 30px #191e2809}
+.stat-label{color:var(--muted);font-size:13px}
+.stat-value{font-size:25px;font-weight:800;margin-top:13px}
+.stat-foot{font-size:12px;color:var(--muted);margin-top:5px}
+.green{color:var(--green)}.red{color:var(--red)}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,1fr);gap:19px}
+.panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.panel-title h2{font-size:17px;margin:0}
+.small-muted{font-size:12px;color:var(--muted)}
+.transaction{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid #f0f0f2}
+.transaction:last-child{border-bottom:0}
+.tx-icon{width:42px;height:42px;border-radius:13px;background:#f4f5f7;display:grid;place-items:center;font-size:19px;flex-shrink:0}
+.tx-info{flex:1;min-width:0}
+.tx-name{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx-meta{font-size:12px;color:var(--muted);margin-top:4px}
+.tx-amount{font-weight:800;font-size:14px;white-space:nowrap}
+.empty{text-align:center;padding:30px 10px;color:var(--muted);font-size:13px}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick{padding:15px 12px;border:1px solid var(--border);border-radius:12px;background:white;text-align:left;font-weight:700}
+.quick:hover{border-color:var(--red);background:#fff8f8}
+.quick span{display:block;font-size:21px;margin-bottom:8px}
+.rule{border-top:1px solid var(--border);padding:14px 0;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.rule-name{font-size:13px;font-weight:700}.rule-meta{font-size:11px;color:var(--muted);margin-top:4px}
+.rule-amount{font-size:13px;font-weight:800;color:var(--green)}
+.text-button{border:0;background:none;color:var(--red);font-weight:700;font-size:12px}
+.section-gap{margin-top:19px}
+.goal-bar{height:9px;background:#f0f0f2;border-radius:20px;overflow:hidden;margin:13px 0 8px}
+.goal-fill{height:100%;background:var(--red);border-radius:20px;width:0}
+.goal-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.chart{display:flex;align-items:end;gap:12px;height:115px;padding:10px 4px 0}
+.chart-col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:7px}
+.chart-bar{width:min(30px,70%);min-height:3px;border-radius:6px 6px 2px 2px;background:#f4a0a5}
+.chart-bar.current{background:var(--red)}
+.chart-month{font-size:10px;color:var(--muted)}
+.footer{text-align:center;padding:28px 10px 35px;color:#9297a0;font-size:11px}
+.modal-backdrop{position:fixed;inset:0;background:#15192380;z-index:20;display:grid;place-items:center;padding:18px}
+.modal{background:white;width:min(440px,100%);border-radius:19px;padding:25px;box-shadow:0 20px 70px #0003}
+.modal h2{margin:0 0 7px;font-size:21px}
+.modal-sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+.field{margin:14px 0}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}
+.field input,.field select{width:100%;padding:12px 13px;border:1px solid #dfe1e6;border-radius:10px;outline:none;background:white}
+.field input:focus,.field select:focus{border-color:var(--red)}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-actions button{flex:1}
+.secondary{border:1px solid var(--border);background:white;border-radius:10px;padding:12px;font-weight:700}
+.modal-error{color:var(--red);font-size:12px;min-height:17px;margin-top:8px}
 .hidden{display:none!important}
-@media(max-width:700px){
-  .grid{grid-template-columns:1fr}
-  main{margin-top:20px}
-  .card{padding:20px}
+@media(max-width:760px){
+ header{padding:0 16px;height:66px}main{margin:24px auto;padding:0 15px}
+ .topline{align-items:flex-start;gap:10px}h1{font-size:22px}
+ .topline .primary{padding:11px 12px;font-size:12px}
+ .balance-panel{padding:23px 20px;display:block}.balance{font-size:35px}
+ .balance-actions{margin-top:19px}.light-btn{flex:1}
+ .stats{grid-template-columns:1fr;gap:10px}.stat{padding:16px}
+ .content-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
-
-<div id="lock">
-  <div class="dialog">
-    <div class="brand"><div class="logo">B</div>Bankkonto</div>
-    <h2 id="lockTitle">Willkommen</h2>
-    <p id="lockMessage">Lege dein Passwort fest.</p>
-    <input id="password" type="password" placeholder="Passwort">
-    <button class="btn" id="unlock">Weiter</button>
-    <p style="font-size:12px;color:#888">
-      Deine Kontodaten werden verschlüsselt auf diesem Gerät gespeichert.
-      Verwende ein sicheres Passwort.
-    </p>
-  </div>
-</div>
-
 <header>
-  <div class="brand">
-    <div class="logo">B</div>
-    <div>Bankkonto</div>
-  </div>
-  <button class="plus" id="add">+</button>
+ <div class="brand"><div class="logo">B</div><span>Bankkonto</span></div>
+ <div style="display:flex;align-items:center;gap:15px"><span id="today" style="font-size:13px;color:#818791"></span><div class="avatar">E</div></div>
 </header>
 
 <main>
-  <h1>Guten Tag!</h1>
-  <p style="color:#777">Deine persönliche Finanzübersicht</p>
+ <div class="topline">
+  <div><h1>Dein Finanzüberblick</h1><div class="subtitle">Alles rund um dein persönliches Guthaben.</div></div>
+  <button class="primary" onclick="openModal('income')">＋ Neue Buchung</button>
+ </div>
 
-  <div class="grid">
-    <div class="card balance">
-      <div class="label">Aktueller Kontostand</div>
-      <div class="amount" id="balance">0,00 €</div>
-      <div class="label">Verfügbares Guthaben</div>
-    </div>
-
-    <div class="card quick">
-      <h3>Schnellzugriff</h3>
-      <button id="income">＋ Geld einzahlen</button>
-      <button id="expense">− Geld ausgeben</button>
-      <button id="monthly">↻ Monatliches Taschengeld</button>
-    </div>
+ <section class="balance-panel">
+  <div class="balance-left">
+   <div class="eyebrow">AKTUELLER KONTOSTAND</div>
+   <div class="balance" id="balance">0,00 €</div>
+   <div class="balance-note">Virtuelles Guthaben · EUR</div>
   </div>
-
-  <div class="card transactions">
-    <h3>Deine Buchungen</h3>
-    <div id="entries"></div>
+  <div class="balance-right balance-actions">
+   <button class="light-btn" onclick="openModal('income')">＋ Einzahlen</button>
+   <button class="light-btn" onclick="openModal('expense')">− Ausgeben</button>
   </div>
+ </section>
+
+ <section class="stats">
+  <div class="stat"><div class="stat-label">Einnahmen diesen Monat</div><div class="stat-value green" id="monthIncome">+0,00 €</div><div class="stat-foot">Alle Gutschriften im aktuellen Monat</div></div>
+  <div class="stat"><div class="stat-label">Ausgaben diesen Monat</div><div class="stat-value red" id="monthExpense">−0,00 €</div><div class="stat-foot">Alle Ausgaben im aktuellen Monat</div></div>
+  <div class="stat"><div class="stat-label">Monatliche Veränderung</div><div class="stat-value" id="monthNet">0,00 €</div><div class="stat-foot">Einnahmen minus Ausgaben</div></div>
+ </section>
+
+ <section class="content-grid">
+  <div>
+   <div class="panel">
+    <div class="panel-title"><h2>Letzte Buchungen</h2><span class="small-muted" id="txCount">0 Buchungen</span></div>
+    <div id="transactions"></div>
+   </div>
+   <div class="panel section-gap">
+    <div class="panel-title"><h2>Finanzentwicklung</h2><span class="small-muted">Letzte 6 Monate</span></div>
+    <div class="chart" id="chart"></div>
+   </div>
+  </div>
+  <div>
+   <div class="panel">
+    <div class="panel-title"><h2>Schnellzugriff</h2></div>
+    <div class="quick-actions">
+     <button class="quick" onclick="openModal('income')"><span class="green">＋</span>Geld einzahlen</button>
+     <button class="quick" onclick="openModal('expense')"><span class="red">−</span>Geld ausgeben</button>
+     <button class="quick" onclick="openRuleModal()"><span>↻</span>Monatliches Geld</button>
+     <button class="quick" onclick="exportBackup()"><span>⇩</span>Backup sichern</button>
+    </div>
+   </div>
+   <div class="panel section-gap">
+    <div class="panel-title"><h2>Regelmäßige Einnahmen</h2><button class="text-button" onclick="openRuleModal()">+ Hinzufügen</button></div>
+    <div id="rules"></div>
+   </div>
+   <div class="panel section-gap">
+    <div class="panel-title"><h2>Sparziel</h2><button class="text-button" onclick="editGoal()">Bearbeiten</button></div>
+    <div style="font-size:13px;font-weight:700" id="goalName">Mein Sparziel</div>
+    <div class="goal-bar"><div class="goal-fill" id="goalFill"></div></div>
+    <div class="goal-row"><span id="goalCurrent">0,00 € gespart</span><span id="goalTarget">Ziel: 100,00 €</span></div>
+   </div>
+  </div>
+ </section>
+ <div class="footer">Privater Geld-Tracker · Keine echte Bankverbindung oder Zahlungsfunktion.</div>
 </main>
 
-<div class="modal" id="modal">
-  <div class="dialog">
-    <h2 id="modalTitle">Neue Buchung</h2>
-    <div id="form"></div>
-    <button class="btn" id="save">Speichern</button>
-    <button class="btn cancel" id="cancel">Abbrechen</button>
-  </div>
+<div class="modal-backdrop hidden" id="transactionModal">
+ <div class="modal">
+  <h2 id="modalTitle">Neue Buchung</h2><div class="modal-sub" id="modalSubtitle"></div>
+  <div class="field"><label>Bezeichnung</label><input id="txTitle" placeholder="z. B. Taschengeld"></div>
+  <div class="field"><label>Betrag in Euro</label><input id="txAmount" type="number" min="0.01" step="0.01" placeholder="0,00"></div>
+  <div class="field"><label>Kategorie</label><select id="txCategory"><option>Allgemein</option><option>Taschengeld</option><option>Geschenk</option><option>Essen</option><option>Spiele</option><option>Technik</option><option>Freizeit</option><option>Sonstiges</option></select></div>
+  <div class="modal-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="saveTransaction()">Speichern</button></div>
+  <div class="modal-error" id="txError"></div>
+ </div>
+</div>
+
+<div class="modal-backdrop hidden" id="ruleModal">
+ <div class="modal">
+  <h2>Monatliches Geld</h2><div class="modal-sub">Lege eine automatische monatliche Einnahme fest.</div>
+  <div class="field"><label>Bezeichnung</label><input id="ruleTitle" placeholder="z. B. Taschengeld"></div>
+  <div class="field"><label>Betrag in Euro</label><input id="ruleAmount" type="number" min="0.01" step="0.01" placeholder="20,00"></div>
+  <div class="field"><label>Tag im Monat</label><input id="ruleDay" type="number" min="1" max="28" value="1"></div>
+  <div class="modal-actions"><button class="secondary" onclick="closeRuleModal()">Abbrechen</button><button class="primary" onclick="saveRule()">Regel speichern</button></div>
+  <div class="modal-error" id="ruleError"></div>
+ </div>
+</div>
+
+<div class="modal-backdrop hidden" id="goalModal">
+ <div class="modal">
+  <h2>Sparziel bearbeiten</h2>
+  <div class="field"><label>Name</label><input id="goalTitleInput"></div>
+  <div class="field"><label>Zielbetrag in Euro</label><input id="goalAmountInput" type="number" min="1" step="0.01"></div>
+  <div class="modal-actions"><button class="secondary" onclick="closeGoal()">Abbrechen</button><button class="primary" onclick="saveGoal()">Speichern</button></div>
+ </div>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
-const DATA="bankkonto_secure_data";
-const RULES="bankkonto_rules";
-let account={entries:[]};
-let rules=[];
-let cryptoKey=null;
-let mode="income";
+const money=c=>(c/100).toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+const today=()=>new Date().toISOString().slice(0,10);
+let account={entries:[],rules:[],goal:{name:'Mein Sparziel',amount:10000}};
+let modalType='income';
 
-const money=n=>new Intl.NumberFormat("de-DE",{
-  style:"currency",currency:"EUR"
-}).format(n);
-
-async function derive(password,salt){
-  const base=await crypto.subtle.importKey(
-    "raw",new TextEncoder().encode(password),
-    "PBKDF2",false,["deriveKey"]
-  );
-  return crypto.subtle.deriveKey({
-    name:"PBKDF2",salt,iterations:310000,hash:"SHA-256"
-  },base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
-}
-
-async function encrypt(data){
-  const iv=crypto.getRandomValues(new Uint8Array(12));
-  const result=await crypto.subtle.encrypt(
-    {name:"AES-GCM",iv},cryptoKey,
-    new TextEncoder().encode(JSON.stringify(data))
-  );
-  return {iv:[...iv],data:[...new Uint8Array(result)]};
-}
-
-async function decrypt(obj){
-  const result=await crypto.subtle.decrypt(
-    {name:"AES-GCM",iv:new Uint8Array(obj.iv)},
-    cryptoKey,new Uint8Array(obj.data)
-  );
-  return JSON.parse(new TextDecoder().decode(result));
-}
-
-async function save(){
-  localStorage.setItem(DATA,JSON.stringify(await encrypt(account)));
-  localStorage.setItem(RULES,JSON.stringify(rules));
-}
-
-async function unlock(){
-  const password=$("password").value;
-  if(!password)return;
-
-  try{
-    const stored=localStorage.getItem(DATA);
-
-    if(!stored){
-      if(password.length<10){
-        $("lockMessage").textContent=
-          "Bitte mindestens 10 Zeichen verwenden.";
-        return;
-      }
-      const salt=crypto.getRandomValues(new Uint8Array(16));
-      cryptoKey=await derive(password,salt);
-      account={entries:[]};
-      localStorage.setItem(DATA,JSON.stringify({
-        salt:[...salt],...(await encrypt(account))
-      }));
-    }else{
-      const obj=JSON.parse(stored);
-      cryptoKey=await derive(password,new Uint8Array(obj.salt));
-      account=await decrypt(obj);
-    }
-
-    rules=JSON.parse(localStorage.getItem(RULES)||"[]");
-    $("lock").classList.add("hidden");
-    applyRules();
-    render();
-  }catch(e){
-    cryptoKey=null;
-    $("lockMessage").textContent=
-      "Passwort falsch oder Daten beschädigt.";
+function load(){
+ try{
+  const saved=localStorage.getItem('bankkonto_data');
+  if(saved){
+   const parsed=JSON.parse(saved);
+   account={...account,...parsed};
   }
+ }catch(e){console.error('Gespeicherte Daten konnten nicht gelesen werden.',e)}
+ applyMonthlyRules();
+ save();
+ render();
 }
-
-$("unlock").onclick=unlock;
-$("password").onkeydown=e=>{
-  if(e.key==="Enter")unlock();
-};
-
-function month(){
-  const d=new Date();
-  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+function save(){localStorage.setItem('bankkonto_data',JSON.stringify(account))}
+function applyMonthlyRules(){
+ const now=new Date();
+ const month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+ account.rules.forEach(rule=>{
+  if(rule.lastApplied===month||now.getDate()<Number(rule.day))return;
+  account.entries.push({
+   id:crypto.randomUUID(),title:rule.title,amount:rule.amount,
+   type:'income',category:'Taschengeld',
+   date:month+'-'+String(rule.day).padStart(2,'0'),automatic:true
+  });
+  rule.lastApplied=month;
+ });
 }
-
-function nextMonth(m){
-  let [y,n]=m.split("-").map(Number);
-  n++;
-  if(n>12){n=1;y++}
-  return y+"-"+String(n).padStart(2,"0");
+function openModal(type){
+ modalType=type;
+ $('modalTitle').textContent=type==='income'?'Geld einzahlen':'Geld ausgeben';
+ $('modalSubtitle').textContent=type==='income'?'Eine Einnahme hinzufügen.':'Eine Ausgabe von deinem Guthaben abziehen.';
+ $('txTitle').value='';$('txAmount').value='';$('txCategory').value='Allgemein';$('txError').textContent='';
+ $('transactionModal').classList.remove('hidden');
 }
-
-function applyRules(){
-  let changed=false;
-  for(const r of rules){
-    let m=r.lastApplied?nextMonth(r.lastApplied):r.start;
-    while(m<=month()){
-      account.entries.push({
-        id:crypto.randomUUID(),
-        amount:r.amount,
-        name:r.name,
-        date:m+"-01",
-        auto:true
-      });
-      r.lastApplied=m;
-      changed=true;
-      m=nextMonth(m);
-    }
-  }
-  if(changed)save();
+function closeModal(){$('transactionModal').classList.add('hidden')}
+function saveTransaction(){
+ const title=$('txTitle').value.trim();
+ const amount=Math.round(Number($('txAmount').value)*100);
+ if(!title||!Number.isFinite(amount)||amount<=0){$('txError').textContent='Bitte Bezeichnung und gültigen Betrag eingeben.';return}
+ const balance=account.entries.reduce((s,e)=>s+(e.type==='income'?e.amount:-e.amount),0);
+ if(modalType==='expense'&&amount>balance){$('txError').textContent='Dafür reicht dein Guthaben nicht aus.';return}
+ account.entries.push({id:crypto.randomUUID(),title,amount,type:modalType,category:$('txCategory').value,date:today(),automatic:false});
+ closeModal();save();render();
 }
-
+function openRuleModal(){
+ $('ruleTitle').value='Taschengeld';$('ruleAmount').value='20';$('ruleDay').value='1';$('ruleError').textContent='';
+ $('ruleModal').classList.remove('hidden');
+}
+function closeRuleModal(){$('ruleModal').classList.add('hidden')}
+function saveRule(){
+ const title=$('ruleTitle').value.trim(),amount=Math.round(Number($('ruleAmount').value)*100),day=Number($('ruleDay').value);
+ if(!title||!Number.isFinite(amount)||amount<=0||!Number.isInteger(day)||day<1||day>28){$('ruleError').textContent='Bitte überprüfe die Angaben. Der Tag muss zwischen 1 und 28 liegen.';return}
+ account.rules.push({id:crypto.randomUUID(),title,amount,day,lastApplied:null});
+ closeRuleModal();applyMonthlyRules();save();render();
+}
+function deleteRule(id){
+ if(!confirm('Diese monatliche Regel wirklich löschen?'))return;
+ account.rules=account.rules.filter(r=>r.id!==id);save();render();
+}
+function deleteTransaction(id){
+ if(!confirm('Diese Buchung wirklich löschen?'))return;
+ account.entries=account.entries.filter(e=>e.id!==id);save();render();
+}
+function editGoal(){
+ $('goalTitleInput').value=account.goal.name;
+ $('goalAmountInput').value=(account.goal.amount/100).toFixed(2);
+ $('goalModal').classList.remove('hidden');
+}
+function closeGoal(){$('goalModal').classList.add('hidden')}
+function saveGoal(){
+ const name=$('goalTitleInput').value.trim(),amount=Math.round(Number($('goalAmountInput').value)*100);
+ if(!name||!Number.isFinite(amount)||amount<=0)return;
+ account.goal={name,amount};closeGoal();save();render();
+}
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 function render(){
-  const total=account.entries.reduce((a,e)=>a+e.amount,0);
-  $("balance").textContent=money(total);
-  const list=$("entries");
-  list.innerHTML="";
-
-  const sorted=[...account.entries].sort(
-    (a,b)=>b.date.localeCompare(a.date)
-  );
-
-  if(!sorted.length){
-    list.textContent="Noch keine Buchungen vorhanden.";
-    return;
-  }
-
-  for(const e of sorted){
-    const row=document.createElement("div");
-    row.className="entry";
-
-    const left=document.createElement("div");
-    const name=document.createElement("strong");
-    name.textContent=e.name+(e.auto?" · monatlich":"");
-    const date=document.createElement("small");
-    date.textContent=new Date(e.date+"T12:00:00").toLocaleDateString("de-DE");
-    left.append(name,date);
-
-    const right=document.createElement("div");
-    right.style.display="flex";
-    right.style.alignItems="center";
-    const amount=document.createElement("span");
-    amount.className=e.amount>=0?"green":"red";
-    amount.textContent=(e.amount>=0?"+":"−")+money(Math.abs(e.amount));
-
-    const del=document.createElement("button");
-    del.className="delete";
-    del.textContent="×";
-    del.onclick=async()=>{
-      if(confirm("Buchung löschen?")){
-        account.entries=account.entries.filter(x=>x.id!==e.id);
-        await save();
-        render();
-      }
-    };
-
-    right.append(amount,del);
-    row.append(left,right);
-    list.append(row);
-  }
+ const balance=account.entries.reduce((s,e)=>s+(e.type==='income'?e.amount:-e.amount),0);
+ $('balance').textContent=money(balance);
+ const month=new Date().toISOString().slice(0,7);
+ const entries=account.entries.filter(e=>e.date.startsWith(month));
+ const income=entries.filter(e=>e.type==='income').reduce((s,e)=>s+e.amount,0);
+ const expense=entries.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amount,0);
+ $('monthIncome').textContent='+'+money(income);
+ $('monthExpense').textContent='−'+money(expense);
+ $('monthNet').textContent=money(income-expense);
+ $('monthNet').className='stat-value '+(income-expense>=0?'green':'red');
+ $('txCount').textContent=account.entries.length+' Buchungen';
+ const sorted=[...account.entries].sort((a,b)=>b.date.localeCompare(a.date));
+ $('transactions').innerHTML=sorted.length?sorted.map(e=>`
+  <div class="transaction">
+   <div class="tx-icon">${e.type==='income'?'↗':'↘'}</div>
+   <div class="tx-info"><div class="tx-name">${escapeHTML(e.title)}</div><div class="tx-meta">${escapeHTML(e.category||'Allgemein')} · ${new Date(e.date+'T12:00:00').toLocaleDateString('de-DE')}${e.automatic?' · Automatisch':''}</div></div>
+   <div class="tx-amount ${e.type==='income'?'green':'red'}">${e.type==='income'?'+':'−'}${money(e.amount)}</div>
+   <button class="text-button" onclick="deleteTransaction('${e.id}')">✕</button>
+  </div>`).join(''):'<div class="empty">Noch keine Buchungen vorhanden.<br>Füge deine erste Einnahme oder Ausgabe hinzu.</div>';
+ $('rules').innerHTML=account.rules.length?account.rules.map(r=>`
+  <div class="rule"><div><div class="rule-name">${escapeHTML(r.title)}</div><div class="rule-meta">Jeden Monat am ${r.day}.</div></div>
+  <div style="display:flex;align-items:center;gap:9px"><span class="rule-amount">+${money(r.amount)}</span><button class="text-button" onclick="deleteRule('${r.id}')">✕</button></div></div>`).join(''):'<div class="empty">Noch keine regelmäßigen Einnahmen eingerichtet.</div>';
+ const target=account.goal.amount||10000;
+ $('goalName').textContent=account.goal.name;
+ $('goalCurrent').textContent=money(Math.max(0,balance))+' Guthaben';
+ $('goalTarget').textContent='Ziel: '+money(target);
+ $('goalFill').style.width=Math.min(100,Math.max(0,balance)/target*100)+'%';
+ renderChart();
+ $('today').textContent=new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
 }
-
-function open(title,html,m){
-  mode=m;
-  $("modalTitle").textContent=title;
-  $("form").innerHTML=html;
-  $("modal").style.display="flex";
+function renderChart(){
+ const months=[];
+ for(let i=5;i>=0;i--){
+  const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);
+  const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  const value=account.entries.filter(e=>e.date.startsWith(key)).reduce((s,e)=>s+(e.type==='income'?e.amount:-e.amount),0);
+  months.push({label:d.toLocaleDateString('de-DE',{month:'short'}),value});
+ }
+ const max=Math.max(1,...months.map(m=>Math.abs(m.value)));
+ $('chart').innerHTML=months.map((m,i)=>`
+  <div class="chart-col"><div class="chart-bar ${i===5?'current':''}" title="${money(m.value)}" style="height:${Math.max(4,Math.abs(m.value)/max*85)}px;${m.value<0?'background:#e7a0a3':''}"></div><div class="chart-month">${m.label}</div></div>`).join('');
 }
-
-function close(){$("modal").style.display="none"}
-
-$("add").onclick=()=>showEntry("income");
-$("income").onclick=()=>showEntry("income");
-$("expense").onclick=()=>showEntry("expense");
-
-function showEntry(type){
-  open("Neue Buchung",`
-    <label>Art</label>
-    <select id="type">
-      <option value="income">Einnahme</option>
-      <option value="expense">Ausgabe</option>
-    </select>
-    <label>Betrag in Euro</label>
-    <input id="amount" type="number" min=".01" step=".01" placeholder="20,00">
-    <label>Beschreibung</label>
-    <input id="name" maxlength="80" placeholder="z. B. Taschengeld">
-    <label>Datum</label>
-    <input id="date" type="date" value="${new Date().toISOString().slice(0,10)}">
-  `,"entry");
-  $("type").value=type;
+function exportBackup(){
+ const blob=new Blob([JSON.stringify(account,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='bankkonto-backup.json';a.click();URL.revokeObjectURL(url);
 }
-
-$("monthly").onclick=()=>{
-  open("Monatliches Taschengeld",`
-    <label>Betrag pro Monat (€)</label>
-    <input id="amount" type="number" min=".01" step=".01" placeholder="20,00">
-    <label>Beschreibung</label>
-    <input id="name" placeholder="Taschengeld">
-    <label>Art</label>
-    <select id="type">
-      <option value="income">Geld bekommen</option>
-      <option value="expense">Geld abziehen</option>
-    </select>
-    <label>Startmonat</label>
-    <input id="start" type="month" value="${month()}">
-  `,"monthly");
-};
-
-$("save").onclick=async()=>{
-  const amount=Number($("amount").value);
-  const name=$("name").value.trim();
-
-  if(!Number.isFinite(amount)||amount<=0||!name){
-    alert("Bitte Betrag und Beschreibung eingeben.");
-    return;
-  }
-
-  if(mode==="entry"){
-    const date=$("date").value;
-    if(!date){alert("Bitte Datum auswählen.");return}
-    account.entries.push({
-      id:crypto.randomUUID(),
-      amount:$("type").value==="income"?amount:-amount,
-      name,date
-    });
-  }else{
-    const start=$("start").value;
-    if(!start){alert("Bitte Startmonat wählen.");return}
-    rules.push({
-      id:crypto.randomUUID(),
-      amount:$("type").value==="income"?amount:-amount,
-      name,start,lastApplied:null
-    });
-  }
-
-  await save();
-  applyRules();
-  render();
-  close();
-};
-
-$("cancel").onclick=close;
+load();
 </script>
 </body>
 </html>
